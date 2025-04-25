@@ -23,9 +23,13 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <a href="#home" onClick={(e) => handleScroll(e, 'home')} className="text-xl font-bold cursor-pointer">
-              Portfolio
-            </a>
+          <a
+            href="#home"
+            onClick={(e) => handleScroll(e, 'home')}
+            className="text-2xl font-extrabold text-[var(--color-blue-600)] drop-shadow-md hover:drop-shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer tracking-wide"
+          >
+            Portfolio
+          </a>
           </div>
           
           {/* Desktop Menu */}
