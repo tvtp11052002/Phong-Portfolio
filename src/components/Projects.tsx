@@ -21,8 +21,10 @@ export default function Projects() {
   const [passwordError, setPasswordError] = useState('');
   const [selectedPosition, setSelectedPosition] = useState<string>('all');
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [projectToEdit, setProjectToEdit] = useState<Project | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [newProject, setNewProject] = useState<Omit<Project, 'id'>>({
     title: '',
@@ -93,6 +95,19 @@ export default function Projects() {
       });
       setPreviewImage(null);
       setShowAddForm(false);
+    }
+  };
+
+  const handleUpdateProject = () => {
+    if (projectToEdit) {
+      setProjects((prev) =>
+        prev.map((proj) =>
+          proj.id === projectToEdit.id ? projectToEdit : proj
+        )
+      );
+      setShowEditForm(false);
+      setProjectToEdit(null);
+      setPreviewImage(null);
     }
   };
 
@@ -284,6 +299,84 @@ export default function Projects() {
           </div>
         )}
 
+        {showEditForm && projectToEdit && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg w-full max-w-md max-h-screen overflow-y-auto">
+              <h3 className="text-xl font-bold mb-4">Edit Project</h3>
+              <div className="space-y-4">
+                <input
+                  type="text"
+                  placeholder="Project Title"
+                  value={projectToEdit.title}
+                  onChange={(e) =>
+                    setProjectToEdit({ ...projectToEdit, title: e.target.value })
+                  }
+                  className="w-full px-4 py-2 border rounded-lg"
+                />
+                <textarea
+                  placeholder="Project Description"
+                  value={projectToEdit.description}
+                  onChange={(e) =>
+                    setProjectToEdit({ ...projectToEdit, description: e.target.value })
+                  }
+                  className="w-full px-4 py-2 border rounded-lg"
+                  rows={4}
+                />
+                <select
+                  value={projectToEdit.position}
+                  onChange={(e) =>
+                    setProjectToEdit({ ...projectToEdit, position: e.target.value })
+                  }
+                  className="w-full px-4 py-2 border rounded-lg"
+                >
+                  <option value="">Select Position</option>
+                  <option value="backend">Backend Developer</option>
+                  <option value="ai">AI Developer</option>
+                  <option value="fullstack">Full Stack Developer</option>
+                </select>
+                <input
+                  type="text"
+                  placeholder="Demo URL (optional)"
+                  value={projectToEdit.demoUrl || ''}
+                  onChange={(e) =>
+                    setProjectToEdit({ ...projectToEdit, demoUrl: e.target.value })
+                  }
+                  className="w-full px-4 py-2 border rounded-lg"
+                />
+                <input
+                  type="text"
+                  placeholder="Source Code URL (optional)"
+                  value={projectToEdit.sourceUrl || ''}
+                  onChange={(e) =>
+                    setProjectToEdit({ ...projectToEdit, sourceUrl: e.target.value })
+                  }
+                  className="w-full px-4 py-2 border rounded-lg"
+                />
+                {/* Optional: image update can reuse previewImage */}
+                <div className="flex justify-end gap-4">
+                  <button
+                    onClick={() => {
+                      setShowEditForm(false);
+                      setProjectToEdit(null);
+                      setPreviewImage(null);
+                    }}
+                    className="px-4 py-2 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleUpdateProject}
+                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                  >
+                    Update
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+
         {/* Delete Confirmation Modal */}
         {showDeleteModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -330,6 +423,29 @@ export default function Projects() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                   </svg>
                 </button>
+              )}
+
+              {isAdmin && (
+                <div className="absolute top-2 right-2 flex gap-2 z-10">
+                  <button
+                    onClick={() => {
+                      setProjectToEdit(project);
+                      setShowEditForm(true);
+                      setPreviewImage(project.imageUrl || null);
+                    }}
+                    className="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600 text-sm"
+                    title="Edit project"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => confirmDelete(project.id)}
+                    className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 text-sm"
+                    title="Delete project"
+                  >
+                    Delete
+                  </button>
+                </div>
               )}
               
               <div className="p-6">
