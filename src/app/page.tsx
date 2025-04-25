@@ -4,6 +4,8 @@ import Image from "next/image";
 import Navbar from '@/components/Navbar'
 import Projects from '@/components/Projects'
 import { motion } from "framer-motion";
+import { MdEmail, MdPhone } from "react-icons/md";
+import { FaGithub, FaLinkedin } from "react-icons/fa";
 
 // Animation variants
 // const container = {
@@ -344,10 +346,10 @@ export default function Home() {
               
               <div className="space-y-4">
                 {[
-                  { icon: "email", text: "tvtp11052002@gmail.com" },
-                  { icon: "phone", text: "+84 335 294 028" },
-                  { icon: "github", text: "github.com/tvtp11052002", url: "https://github.com/tvtp11052002" },
-                  { icon: "linkedin", text: "linkedin.com/in/tvtp11052002", url: "https://linkedin.com/in/tvtp11052002" }
+                  { icon: <MdEmail className="text-xl" />, text: "tvtp11052002@gmail.com" },
+                  { icon: <MdPhone className="text-xl" />, text: "+84 335 294 028" },
+                  { icon: <FaGithub className="text-xl" />, text: "github.com/tvtp11052002", url: "https://github.com/tvtp11052002" },
+                  { icon: <FaLinkedin className="text-xl" />, text: "linkedin.com/in/tvtp11052002", url: "https://linkedin.com/in/tvtp11052002" }
                 ].map((item, index) => (
                   <motion.div
                     key={index}
@@ -358,7 +360,9 @@ export default function Home() {
                     viewport={{ once: true }}
                     transition={{ delay: 0.3 + index * 0.1 }}
                   >
-                    {/* Icons remain the same */}
+                    <div className="text-blue-500 dark:text-blue-400 w-6">
+                      {item.icon}
+                    </div>
                     {item.url ? (
                       <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
                         {item.text}
