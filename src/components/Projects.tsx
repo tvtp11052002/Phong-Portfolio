@@ -1,11 +1,12 @@
 'use client';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 interface Project {
   id: number;
   title: string;
   description: string;
   position: string;
+  imageUrl?: string;
   demoUrl?: string;
   sourceUrl?: string;
 }
@@ -13,14 +14,71 @@ interface Project {
 export default function Projects() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState<number | null>(null);
+  const [password, setPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const [selectedPosition, setSelectedPosition] = useState<string>('all');
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  
   const [newProject, setNewProject] = useState<Omit<Project, 'id'>>({
     title: '',
     description: '',
     position: '',
+    imageUrl: '',
     demoUrl: '',
     sourceUrl: '',
   });
+
+  // The password you want to use - consider moving this to environment variables in production
+  const CORRECT_PASSWORD = 'Phong25251325';
+
+  // Load projects from localStorage on initial load
+  useEffect(() => {
+    const savedProjects = localStorage.getItem('portfolioProjects');
+    if (savedProjects) {
+      try {
+        setProjects(JSON.parse(savedProjects));
+      } catch (error) {
+        console.error('Failed to parse saved projects:', error);
+      }
+    }
+  }, []);
+
+  // Save projects to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('portfolioProjects', JSON.stringify(projects));
+  }, [projects]);
+
+  const handlePasswordSubmit = () => {
+    if (password === CORRECT_PASSWORD) {
+      setShowPasswordModal(false);
+      setShowAddForm(true);
+      setPassword('');
+      setPasswordError('');
+      setIsAdmin(true); // ✅ đánh dấu là admin
+    } else {
+      setPasswordError('Incorrect password');
+    }
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // For a real app, you'd upload to a server
+      // For this demo with localStorage, we need to convert to data URL
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const imageDataUrl = reader.result as string;
+        setPreviewImage(imageDataUrl);
+        setNewProject({ ...newProject, imageUrl: imageDataUrl });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleAddProject = () => {
     if (newProject.title && newProject.description && newProject.position) {
@@ -29,10 +87,25 @@ export default function Projects() {
         title: '',
         description: '',
         position: '',
+        imageUrl: '',
         demoUrl: '',
         sourceUrl: '',
       });
+      setPreviewImage(null);
       setShowAddForm(false);
+    }
+  };
+
+  const confirmDelete = (id: number) => {
+    setProjectToDelete(id);
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteProject = () => {
+    if (projectToDelete !== null) {
+      setProjects(projects.filter(project => project.id !== projectToDelete));
+      setShowDeleteModal(false);
+      setProjectToDelete(null);
     }
   };
 
@@ -57,7 +130,7 @@ export default function Projects() {
               <option value="fullstack">Full Stack Developer</option>
             </select>
             <button
-              onClick={() => setShowAddForm(true)}
+              onClick={() => setShowPasswordModal(true)}
               className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors relative z-20"
             >
               Add Project
@@ -65,9 +138,54 @@ export default function Projects() {
           </div>
         </div>
 
-        {showAddForm && (
+        {/* Password Modal */}
+        {showPasswordModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg w-full max-w-md">
+              <h3 className="text-xl font-bold mb-4">Enter Administrator Password</h3>
+              <div className="space-y-4">
+                <input
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-4 py-2 border rounded-lg"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handlePasswordSubmit();
+                    }
+                  }}
+                />
+                {passwordError && (
+                  <p className="text-red-500 text-sm">{passwordError}</p>
+                )}
+                <div className="flex justify-end gap-4">
+                  <button
+                    onClick={() => {
+                      setShowPasswordModal(false);
+                      setPassword('');
+                      setPasswordError('');
+                    }}
+                    className="px-4 py-2 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handlePasswordSubmit}
+                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                  >
+                    Submit
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Project Add Form */}
+        {showAddForm && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg w-full max-w-md max-h-screen overflow-y-auto">
               <h3 className="text-xl font-bold mb-4">Add New Project</h3>
               <div className="space-y-4">
                 <input
@@ -94,6 +212,42 @@ export default function Projects() {
                   <option value="ai">AI Developer</option>
                   <option value="fullstack">Full Stack Developer</option>
                 </select>
+                
+                {/* Image Upload Section */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium">Project Image</label>
+                  <div className="flex items-center gap-4">
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="px-4 py-2 border rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600"
+                    >
+                      Choose Image
+                    </button>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                    />
+                    <span className="text-sm text-gray-500">
+                      {previewImage ? 'Image selected' : 'No image selected'}
+                    </span>
+                  </div>
+                  
+                  {/* Image Preview */}
+                  {previewImage && (
+                    <div className="mt-2">
+                      <img 
+                        src={previewImage} 
+                        alt="Preview" 
+                        className="h-32 object-cover rounded-lg"
+                      />
+                    </div>
+                  )}
+                </div>
+                
                 <input
                   type="text"
                   placeholder="Demo URL (optional)"
@@ -110,7 +264,10 @@ export default function Projects() {
                 />
                 <div className="flex justify-end gap-4">
                   <button
-                    onClick={() => setShowAddForm(false)}
+                    onClick={() => {
+                      setShowAddForm(false);
+                      setPreviewImage(null);
+                    }}
                     className="px-4 py-2 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
                   >
                     Cancel
@@ -127,10 +284,54 @@ export default function Projects() {
           </div>
         )}
 
+        {/* Delete Confirmation Modal */}
+        {showDeleteModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg w-full max-w-md">
+              <h3 className="text-xl font-bold mb-4">Delete Project</h3>
+              <p className="mb-4">Are you sure you want to delete this project? This action cannot be undone.</p>
+              <div className="flex justify-end gap-4">
+                <button
+                  onClick={() => setShowDeleteModal(false)}
+                  className="px-4 py-2 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDeleteProject}
+                  className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredProjects.map((project) => (
-            <div key={project.id} className="bg-white/80 dark:bg-gray-800/80 rounded-lg overflow-hidden shadow-lg backdrop-blur-sm">
-              <div className="h-48 bg-gray-200 dark:bg-gray-700"></div>
+            <div key={project.id} className="bg-white/80 dark:bg-gray-800/80 rounded-lg overflow-hidden shadow-lg backdrop-blur-sm relative">
+              {/* Project Image */}
+              {project.imageUrl ? (
+                <div className="h-48 bg-cover bg-center" style={{ backgroundImage: `url(${project.imageUrl})` }}></div>
+              ) : (
+                <div className="h-48 bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                  <span className="text-gray-400 dark:text-gray-500">No image</span>
+                </div>
+              )}
+
+              {isAdmin && (
+                <button
+                  onClick={() => confirmDelete(project.id)}
+                  className="absolute top-2 right-2 bg-red-400 text-white p-1 rounded-full hover:opacity-100 transition-opacity"
+                  title="Delete project"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              )}
+              
               <div className="p-6">
                 <h3 className="text-xl font-bold mb-2">{project.title}</h3>
                 <p className="text-gray-600 dark:text-gray-300 mb-4">{project.description}</p>
@@ -153,4 +354,4 @@ export default function Projects() {
       </div>
     </section>
   );
-} 
+}

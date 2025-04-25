@@ -216,9 +216,7 @@ export default function Home() {
               transition={{ delay: 0.2 }}
             >
               <p className="text-lg text-gray-600 dark:text-gray-300">
-                I&apos;m a Backend/AI Developer with a passion for creating intelligent and efficient solutions.
-                With expertise in modern technologies, I bring ideas to life through clean code and
-                innovative approaches to problem-solving.
+                I&apos;m a Backend-AI engineer with strong experience in Python, AWS, and scientific modeling. I’ve contributed to environmental simulation systems like DayCent, built data pipelines and APIs for GHG analysis, and applied OCR and federated learning to solve real-world problems. My focus is on scalable, efficient backend systems that bridge AI and environmental intelligence.
               </p>
               <div className="space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -305,7 +303,7 @@ export default function Home() {
               >
                 <div className="relative h-full w-full rounded-full overflow-hidden">
                   <Image
-                    src="/images/avatar.jpg"
+                    src="/images/avatar_circle.jpg"
                     alt="Tuan Phong"
                     fill
                     className="object-cover rounded-full transition-all duration-300 hover:scale-105"
