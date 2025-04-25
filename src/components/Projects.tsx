@@ -58,7 +58,7 @@ export default function Projects() {
   const handlePasswordSubmit = () => {
     if (password === CORRECT_PASSWORD) {
       setShowPasswordModal(false);
-      setShowAddForm(true);
+      setShowAddForm(false);
       setPassword('');
       setPasswordError('');
       setIsAdmin(true); // ✅ đánh dấu là admin
@@ -144,12 +144,30 @@ export default function Projects() {
               <option value="ai">AI Developer</option>
               <option value="fullstack">Full Stack Developer</option>
             </select>
-            <button
-              onClick={() => setShowPasswordModal(true)}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors relative z-20"
-            >
-              Add Project
-            </button>
+            {!isAdmin && (
+              <button
+                onClick={() => setShowPasswordModal(true)}
+                className="border border-blue-600 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors"
+              >
+                Admin Login
+              </button>
+            )}
+            {isAdmin && (
+              <button
+                onClick={() => setShowAddForm(true)}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Add Project
+              </button>
+            )}
+            {isAdmin && (
+              <button
+                onClick={() => setIsAdmin(false)}
+                className="border border-blue-600 px-4 py-2 rounded-lg ml-auto text-gray-500 transition-colors hover:text-red-600"
+              >
+                Log Out
+              </button>
+            )}
           </div>
         </div>
 
