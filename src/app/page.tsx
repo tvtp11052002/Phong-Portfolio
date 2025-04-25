@@ -98,7 +98,7 @@ export default function Home() {
             {Array.from("Tuan Phong").map((char, index) => (
               <motion.span
                 key={index}
-                className="inline-block text-blue-600"
+                className="inline-block bg-gradient-to-r from-blue-600 via-blue-500 to-blue-400 text-transparent bg-clip-text"
                 style={{ display: char === ' ' ? 'inline' : 'inline-block' }}
                 variants={{
                   hidden: { opacity: 0, y: 20 },
