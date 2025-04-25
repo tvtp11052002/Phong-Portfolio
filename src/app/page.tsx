@@ -6,51 +6,51 @@ import Projects from '@/components/Projects'
 import { motion } from "framer-motion";
 
 // Animation variants
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
+// const container = {
+//   hidden: { opacity: 0 },
+//   show: {
+//     opacity: 1,
+//     transition: {
+//       staggerChildren: 0.1
+//     }
+//   }
+// };
 
-const item = {
-  hidden: { opacity: 0, y: 20 },
-  show: { 
-    opacity: 1, 
-    y: 0,
-    transition: {
-      type: "spring",
-      stiffness: 300,
-      damping: 24
-    }
-  }
-};
+// const item = {
+//   hidden: { opacity: 0, y: 20 },
+//   show: { 
+//     opacity: 1, 
+//     y: 0,
+//     transition: {
+//       type: "spring",
+//       stiffness: 300,
+//       damping: 24
+//     }
+//   }
+// };
 
-const continuousAnimation = {
-  animate: {
-    y: [0, -5, 0],
-    scale: [1, 1.05, 1],
-    transition: {
-      duration: 2,
-      repeat: Infinity,
-      ease: "easeInOut"
-    }
-  }
-};
+// const continuousAnimation = {
+//   animate: {
+//     y: [0, -5, 0],
+//     scale: [1, 1.05, 1],
+//     transition: {
+//       duration: 2,
+//       repeat: Infinity,
+//       ease: "easeInOut"
+//     }
+//   }
+// };
 
-const typingAnimation = {
-  initial: { width: 0 },
-  animate: { 
-    width: "100%",
-    transition: {
-      duration: 1,
-      ease: "easeInOut"
-    }
-  }
-};
+// const typingAnimation = {
+//   initial: { width: 0 },
+//   animate: { 
+//     width: "100%",
+//     transition: {
+//       duration: 1,
+//       ease: "easeInOut"
+//     }
+//   }
+// };
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -92,7 +92,7 @@ export default function Home() {
           <motion.h1 
             className="text-4xl sm:text-6xl font-bold mb-6"
           >
-            <span>Hi, I'm </span>
+            <span>Hi, I&apos;m </span>
             {Array.from("Tuan Phong").map((char, index) => (
               <motion.span
                 key={index}
@@ -214,7 +214,7 @@ export default function Home() {
               transition={{ delay: 0.2 }}
             >
               <p className="text-lg text-gray-600 dark:text-gray-300">
-                I'm a Backend/AI Developer with a passion for creating intelligent and efficient solutions.
+                I&apos;m a Backend/AI Developer with a passion for creating intelligent and efficient solutions.
                 With expertise in modern technologies, I bring ideas to life through clean code and
                 innovative approaches to problem-solving.
               </p>
@@ -339,7 +339,7 @@ export default function Home() {
             >
               <h2 className="text-3xl font-bold">Get in Touch</h2>
               <p className="text-gray-600 dark:text-gray-300">
-                Feel free to reach out to me for any opportunities or collaborations. I'm always open to discussing new projects, creative ideas, or opportunities to be part of your visions.
+                Feel free to reach out to me for any opportunities or collaborations. I&apos;m always open to discussing new projects, creative ideas, or opportunities to be part of your visions.
               </p>
               
               <div className="space-y-4">
