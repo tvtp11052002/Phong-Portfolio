@@ -136,7 +136,7 @@ export default function Home() {
             animate="show"
             transition={{ delay: 0.5 }}
           >
-            Backend/AI Developer crafting intelligent solutions
+            Backend/AI Engineer crafting intelligent solutions
           </motion.p>
           <motion.div 
             className="flex justify-center gap-8 mb-8"
@@ -216,7 +216,7 @@ export default function Home() {
               transition={{ delay: 0.2 }}
             >
               <p className="text-lg text-gray-600 dark:text-gray-300">
-                I&apos;m a Backend-AI engineer with strong experience in Python, AWS, and scientific modeling. I’ve contributed to environmental simulation systems like DayCent, built data pipelines and APIs for GHG analysis, and applied OCR and federated learning to solve real-world problems. My focus is on scalable, efficient backend systems that bridge AI and environmental intelligence.
+                I&apos;m a Backend-AI Engineer with strong experience in Python, AWS, and scientific modeling. I’ve contributed to environmental simulation systems like DayCent, built data pipelines and APIs for GHG analysis, and applied OCR and federated learning to solve real-world problems. My focus is on scalable, efficient backend systems that bridge AI and environmental intelligence.
               </p>
               <div className="space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
